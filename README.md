@@ -32,8 +32,14 @@ tldr; Watch introduction & Demo Video [here](https://www.youtube.com/watch?v=mae
 ## Step -1 ::  Deploy CRC - Linux
 ### Watch Demo Video [here](https://www.youtube.com/watch?v=mae0tiLkQag)
 
-###  GEL - Note:added the wrapper script setup_crc.sh script to deploy the vm  with
-supplied parameters, memory, disk size, kubeadmin password.
+###  GEL - Note:added the wrapper script setup_crc.sh script to deploy the vm  with supplied parameters, memory, disk size, kubeadmin password.
+```
+$ ./setup_crc.sh  -m 16 -s 50 -p password
+```
+Deploys the crc with 16 GB ram, 50 gb vm disk, kubeadmin password of password.
+Also generates 3 10 GB disks, shuts down the vm to attach them and then
+attaches  them to the vm.
+
 
 Note : If you have already deployed CRC using [OpenSpot](https://github.com/ksingh7/openspot) project, you can skip step-1 and move directly to [step-2](https://github.com/ksingh7/odf-nano#step--2--deploy-odf-nano-on-crc)
 ```
