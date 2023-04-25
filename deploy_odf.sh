@@ -3,6 +3,9 @@
 ## karasing@redhat.com
 ## jelopez@redhat.com
 
+## forked from https://github.com/tosin2013/odf-nano
+### modified by george law george@geolaw.com
+
 #!/bin/bash
 set +x
 echo "Setting up environment for ODF - this will take a few minutes"
@@ -86,29 +89,31 @@ provisioner: kubernetes.io/no-provisioner
 EOF
 
 
+## GEL - change the disk_size detection to be more flexible, e.g. works with 10Gi disks
+## change indent in yaml
 for vdisk in ~/.crc/vd*
 do
   virtual_disk="${vdisk##*/}"
   virtual_drive="${virtual_disk%.*}"
 
   echo "Create local-pv-${virtual_drive} for ODF-Nano"
-  disk_size=$(ls -lath ~/.crc/${virtual_drive}  | grep -oE [0-9]{3}G)
+  disk_size=$(ls -lath ~/.crc/${virtual_drive}  | grep -oE [0-9]*G)
 cat <<EOF | oc create -f - >/dev/null
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: local-pv-${virtual_drive} 
+  name: local-pv-${virtual_drive}
 spec:
   capacity:
     storage: ${disk_size}i
   volumeMode: Block
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   persistentVolumeReclaimPolicy: Delete
   storageClassName: localblock
   local:
-    path: /dev/${virtual_drive} 
+    path: /dev/${virtual_drive}
   nodeAffinity:
     required:
       nodeSelectorTerms:

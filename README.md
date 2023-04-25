@@ -11,15 +11,15 @@
 # Introducing ODF-Nano
 tldr; Watch introduction & Demo Video [here](https://www.youtube.com/watch?v=mae0tiLkQag)
 
-`ODF-Nano` lets you deploy [OpenShift Data Foundation](https://www.redhat.com/en/technologies/cloud-computing/openshift-data-foundation) on your Laptop (CRC). 
-- For dev/test experimentation developers ofter need persistent storage with CRC. 
-- Currently CRC lacks clean & simple persistent storage solution,  `ODF-Nano` solves this problem for CRC. 
+`ODF-Nano` lets you deploy [OpenShift Data Foundation](https://www.redhat.com/en/technologies/cloud-computing/openshift-data-foundation) on your Laptop (CRC).
+- For dev/test experimentation developers ofter need persistent storage with CRC.
+- Currently CRC lacks clean & simple persistent storage solution,  `ODF-Nano` solves this problem for CRC.
 - Devs can now develop/test their apps locally using `CRC+ODF-Nano`. Once the app is ready, it could be deployed in production `OCP+ODF` without any change
 # Setup
 
 ## Prerequisites
-### Host OS 
-- RHEL 8, 
+### Host OS
+- RHEL 8,
 - Fedora 34 (tested) [ Feel free to test with other releases ]
 - Ubuntu 20.04 (tested) [ Feel free to test with other releases ]
 - MacOS ( Need more tests )
@@ -31,6 +31,9 @@ tldr; Watch introduction & Demo Video [here](https://www.youtube.com/watch?v=mae
 - Also get CRC pull secret from [cloud.redhat.com]((https://cloud.redhat.com/openshift/create/local) and save it as `~/.crc/pull-secret.txt`
 ## Step -1 ::  Deploy CRC - Linux
 ### Watch Demo Video [here](https://www.youtube.com/watch?v=mae0tiLkQag)
+
+###  GEL - Note:added the wrapper script setup_crc.sh script to deploy the vm  with
+supplied parameters, memory, disk size, kubeadmin password.
 
 Note : If you have already deployed CRC using [OpenSpot](https://github.com/ksingh7/openspot) project, you can skip step-1 and move directly to [step-2](https://github.com/ksingh7/odf-nano#step--2--deploy-odf-nano-on-crc)
 ```
@@ -53,6 +56,10 @@ crc console --credentials  > crc-creds.txt
 
 ## Step -2 :: Deploy ODF-Nano on CRC - Linux
 ### Prerequisites
+
+### GEL - Note: setup_crc.sh now creates 3 10Gi images and attaches them to the
+crc vm
+
 - SSH into the host machine running CRC VM
 - Create a few raw devices that `ODF-Nano` will use
 - You can also run `./generate_volumes.sh`
@@ -208,7 +215,7 @@ oc get sc
 ```
 
 ![ODF Storage Classes](assets/odf-sc.png)
-# Miscelleanous 
+# Miscelleanous
 
 ## ODF-Nano Resource Footprint & Components
 - Resource Footprint
@@ -287,7 +294,7 @@ tcp        0      0 0.0.0.0:6443            0.0.0.0:*               LISTEN      
 
 ```
 
-## MACos Client Node 
+## MACos Client Node
 https://www.stevenrombauts.be/2018/01/use-dnsmasq-instead-of-etc-hosts/
 
 ```
@@ -349,7 +356,7 @@ virsh vol-list --pool crc
 ```
 - Increase root disk spaced of CRC VM
 
-By defautl CRC  vm uses 30G of root disk, you definately need to increase that 
+By defautl CRC  vm uses 30G of root disk, you definately need to increase that
 ```
 crcssh lsblk
 # Identify partition name of /sysroot
