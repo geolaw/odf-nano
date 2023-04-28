@@ -1,4 +1,50 @@
 ![](assets/odf-nano-logo-white.png)
+
+# What's new in my fork?
+I've written 2 wrapper setup scripts which will deploy the crc vm with the
+extra disks for the odf osds.  In linux, this is done with 3 10GB raw image
+files attached to the vm.  In macos, this is done with a loop back image
+within the crc vm itself.
+
+- setup_crc.sh
+- setup_crc_macos.sh
+
+There are also minor edits to the deploy script on linux that adjust for
+the 10GB disks rather than 100GB disks, and a fix to the yaml indenting.
+
+Due to this being a single node ceph cluster, some crush map edits are needed
+to change the crush chooseleaf on pool 1 device_health_metrics from host to
+osd. This should allow ceph to clear any undersized pgs.
+https://docs.ceph.com/en/latest/rados/operations/crush-map-edits/
+
+This can be done by doing an oc rsh into the rook-ceph-operator pod, get and
+decompile the crushmap, then set the chooseleaf from **host** to **osd**.
+After compiling and importing the fixed crushmap back into ceph, this should
+allow all undersized pg warnings to clear.
+
+```
+$ oc rsh -n openshift-storage $(oc get pods -n openshift-storage -o name --field-selector='status.phase=Running' | grep 'rook-ceph-operator')
+sh-4.4$ ceph -c /var/lib/rook/openshift-storage/openshift-storage.config status
+  cluster:
+    id:     14976ccf-520b-4ca5-bc56-dcc1b4699b43
+    health: HEALTH_WARN
+            Degraded data redundancy: 2 pgs undersized
+
+
+sh-4.4$ ceph osd getcrushmap -o /tmp/crushmap_compiled
+sh-4.4$ ceph  -c /var/lib/rook/openshift-storage/openshift-storage.config  osd getcrushmap -o /tmp/crushmap_compiled
+sh-4.4$ crushtool -d /tmp/crushmap_compiled -o /tmp/crushmap_decompiled
+sh-4.4$ cat /tmp/crushmap_decompiled | sed 's/step chooseleaf firstn 0 type host/step chooseleaf firstn 0 type osd/' > /tmp/crushmap_fixed
+sh-4.4$ crushtool -c /tmp/crushmap_fixed -o /tmp/crushmap_fixed_compiled
+sh-4.4$ ceph  -c /var/lib/rook/openshift-storage/openshift-storage.config  osd setcrushmap -i /tmp/crushmap_fixed_compiled
+sh-4.4$ ceph  -c /var/lib/rook/openshift-storage/openshift-storage.config  status
+  cluster:
+    id:     14976ccf-520b-4ca5-bc56-dcc1b4699b43
+    health: HEALTH_OK
+~~~
+
+
+
 # Whats the need ?
 
 - Developers love OpenShift :heart:
@@ -42,7 +88,7 @@ attaches  them to the vm.
 
 
 Note : If you have already deployed CRC using [OpenSpot](https://github.com/ksingh7/openspot) project, you can skip step-1 and move directly to [step-2](https://github.com/ksingh7/odf-nano#step--2--deploy-odf-nano-on-crc)
-~~
+```
 mkdir ~/.crc
 cd ~/.crc
 # Get CRC pull secret from [cloud.redhat.com]((https://cloud.redhat.com/openshift/create/local) and save it as `~/.crc/pull-secret.txt`
@@ -57,7 +103,7 @@ alias crcssh='ssh -i ~/.crc/machines/crc/id_ecdsa core@"$(crc ip)"'
 crc start
 crcssh uptime
 crc console --credentials  > crc-creds.txt
-~~
+```
 
 - Access https://console-openshift-console.apps-crc.testing from client machine
 
@@ -66,7 +112,7 @@ crc console --credentials  > crc-creds.txt
 
 ### GEL - Note: setup_crc.sh now creates 3 10Gi images and attaches them to the
 crc vm
-~~
+
 - SSH into the host machine running CRC VM
 - Create a few raw devices that `ODF-Nano` will use
 - You can also run `./generate_volumes.sh`
@@ -109,7 +155,7 @@ sed -i "s|~|$HOME|g" ~/crc.xml
 sudo virsh define ~/crc.xml
 crc start
 ```
-~~
+
 - List devices to verify
 ```
 crcssh lsblk
@@ -128,7 +174,7 @@ This will create the crc vm based on those values and start it.  Upon starting
 it, it will do the steps below to set up the loop1, odf-disk1 and odf-disk2.
 Finally it will reboot the crc vm to make sure those lvs are started properly
 upon startup.
-~~
+
 ```
 mkdir ~/.crc
 cd ~/.crc
@@ -146,14 +192,14 @@ crc start
 crcssh uptime
 crc console --credentials  > crc-creds.txt
 ```
-~~
+
 - Access https://console-openshift-console.apps-crc.testing from client machine
 
 ## Step -2 :: Deploy ODF-Nano on CRC - MACOS
 
 ## note this step is also done in the setup_crc_macos.sh script above.
 
-~~
+
 ### Prerequisites
 - SSH into the host machine running CRC VM
 - Create a few loopback devices that `ODF-Nano` will use
@@ -189,7 +235,7 @@ EOF
 
 systemctl enable lvm-odf-losetup
 ```
-~~
+
 
 ### Deploy ODF-Nano on CRC
 
