@@ -42,6 +42,7 @@ attaches  them to the vm.
 
 
 Note : If you have already deployed CRC using [OpenSpot](https://github.com/ksingh7/openspot) project, you can skip step-1 and move directly to [step-2](https://github.com/ksingh7/odf-nano#step--2--deploy-odf-nano-on-crc)
+~~
 ```
 mkdir ~/.crc
 cd ~/.crc
@@ -58,6 +59,7 @@ crc start
 crcssh uptime
 crc console --credentials  > crc-creds.txt
 ```
+~~
 - Access https://console-openshift-console.apps-crc.testing from client machine
 
 ## Step -2 :: Deploy ODF-Nano on CRC - Linux
@@ -65,7 +67,7 @@ crc console --credentials  > crc-creds.txt
 
 ### GEL - Note: setup_crc.sh now creates 3 10Gi images and attaches them to the
 crc vm
-
+~~
 - SSH into the host machine running CRC VM
 - Create a few raw devices that `ODF-Nano` will use
 - You can also run `./generate_volumes.sh`
@@ -108,6 +110,7 @@ sed -i "s|~|$HOME|g" ~/crc.xml
 sudo virsh define ~/crc.xml
 crc start
 ```
+~~
 - List devices to verify
 ```
 crcssh lsblk
@@ -116,6 +119,17 @@ crcssh lsblk
 ## Step -1 ::  Deploy CRC - MACOS
 ### Watch Demo Video [here](https://www.youtube.com/watch?v=mae0tiLkQag)
 
+## Note : created setup_crc_macos.sh which should automate all of the setup
+below.  This script takes the following options :
+-p kubeadmin password
+-m memory for VM
+-s size for VM disk
+
+This will create the crc vm based on those values and start it.  Upon starting
+it, it will do the steps below to set up the loop1, odf-disk1 and odf-disk2.
+Finally it will reboot the crc vm to make sure those lvs are started properly
+upon startup.
+~~
 ```
 mkdir ~/.crc
 cd ~/.crc
@@ -133,9 +147,14 @@ crc start
 crcssh uptime
 crc console --credentials  > crc-creds.txt
 ```
+~~
 - Access https://console-openshift-console.apps-crc.testing from client machine
 
 ## Step -2 :: Deploy ODF-Nano on CRC - MACOS
+
+## note this step is also done in the setup_crc_macos.sh script above.
+
+~~
 ### Prerequisites
 - SSH into the host machine running CRC VM
 - Create a few loopback devices that `ODF-Nano` will use
@@ -171,6 +190,7 @@ EOF
 
 systemctl enable lvm-odf-losetup
 ```
+~~
 
 ### Deploy ODF-Nano on CRC
 
