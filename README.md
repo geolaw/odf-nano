@@ -41,7 +41,7 @@ sh-4.4$ ceph  -c /var/lib/rook/openshift-storage/openshift-storage.config  statu
   cluster:
     id:     14976ccf-520b-4ca5-bc56-dcc1b4699b43
     health: HEALTH_OK
-~~~
+```
 
 
 
