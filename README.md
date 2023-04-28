@@ -42,24 +42,23 @@ attaches  them to the vm.
 
 
 Note : If you have already deployed CRC using [OpenSpot](https://github.com/ksingh7/openspot) project, you can skip step-1 and move directly to [step-2](https://github.com/ksingh7/odf-nano#step--2--deploy-odf-nano-on-crc)
-~~
 ```
-mkdir ~/.crc
-cd ~/.crc
-# Get CRC pull secret from [cloud.redhat.com]((https://cloud.redhat.com/openshift/create/local) and save it as `~/.crc/pull-secret.txt`
-crc config set consent-telemetry no
-crc config set enable-cluster-monitoring true # Enable only if you have enough memory, needs ~4G extra
-crc config set cpus 15 #Change as per your HW config
-crc config set memory 60000 #Change as per your HW config
-crc config set pull-secret-file ~/.crc/pull-secret.txt
-crc config view
-crc setup
-alias crcssh='ssh -i ~/.crc/machines/crc/id_ecdsa core@"$(crc ip)"'
-crc start
-crcssh uptime
-crc console --credentials  > crc-creds.txt
+> mkdir ~/.crc
+> cd ~/.crc
+> # Get CRC pull secret from [cloud.redhat.com]((https://cloud.redhat.com/openshift/create/local) and save it as `~/.crc/pull-secret.txt`
+> crc config set consent-telemetry no
+> crc config set enable-cluster-monitoring true # Enable only if you have enough memory, needs ~4G extra
+> crc config set cpus 15 #Change as per your HW config
+> crc config set memory 60000 #Change as per your HW config
+> crc config set pull-secret-file ~/.crc/pull-secret.txt
+> crc config view
+> crc setup
+> alias crcssh='ssh -i ~/.crc/machines/crc/id_ecdsa core@"$(crc ip)"'
+c> rc start
+> crcssh uptime
+> crc console --credentials  > crc-creds.txt
 ```
-~~
+
 - Access https://console-openshift-console.apps-crc.testing from client machine
 
 ## Step -2 :: Deploy ODF-Nano on CRC - Linux
